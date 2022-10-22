@@ -12,6 +12,18 @@ import json
 
 class dexter_helpers_mixin():
 
+    def get_block_timestamp(self):
+        block_info = self.client.tendermint.block_info()
+        timestamp = block_info["block"]["header"]["time"]
+        return timestamp
+
+    def query_token_info(self,  contract_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"token_info":{}})
+            return sim_response         
+        except:
+            return None
+
     ###############################################
     ################ VAULT QUERIES ################
     ###############################################
@@ -25,11 +37,19 @@ class dexter_helpers_mixin():
 
     def query_vault_query_registery(self,  contract_addr, pool_type):
         try:
-            sim_response = self.client.wasm.contract_query(contract_addr , {"query_rigistery" : { pool_type: pool_type }})
+            print(pool_type)
+            sim_response = self.client.wasm.contract_query(contract_addr , {"query_registry" : { "pool_type": pool_type }})
             return sim_response         
         except:
             return None
 
+    def query_vault_IsGeneratorDisabled(self,  contract_addr, lp_token_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr ,  { "is_generator_disabled" : { lp_token_addr: lp_token_addr }})
+            return sim_response         
+        except:
+            return None
+            
     def query_vault_GetPoolById(self,  contract_addr, pool_id):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr ,  { "get_pool_by_id" : { pool_id: pool_id }})
@@ -134,7 +154,7 @@ class dexter_helpers_mixin():
     def execute_increase_allowance(self,token_addr,recepient,amount):
         msg = { "increase_allowance": {'recepient': recepient,  "amount": amount }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, token_addr, msg)
-        tx = self.wallet.create_and_sign_tx( CreateTxOptions(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),))
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
@@ -153,32 +173,38 @@ class dexter_helpers_mixin():
     def execute_vault_UpdateConfig(self,vault_addr,lp_token_code_id=None,fee_collector=None,generator_address=None ):
         msg = { "update_config": {'lp_token_code_id': lp_token_code_id,  "fee_collector": fee_collector, "generator_address":generator_address  }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        # tx = self.wallet.create_and_sign_tx( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
+        print(res)
+        json_object = json.dumps(res, indent=4)
+        with open("sample.json", "w") as outfile:
+            outfile.write(json_object)
         return res
 
     def execute_vault_UpdatePoolConfig(self,vault_addr,pool_type,is_disabled=None,new_fee_info=None ):
         msg = { "update_pool_config": {'pool_type': pool_type,  "is_disabled": is_disabled, "new_fee_info":new_fee_info  }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
     def execute_vault_AddToRegistery(self,vault_addr,new_pool_config):
         msg = { "add_to_registery": {'new_pool_config': new_pool_config }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
     def execute_vault_CreatePoolInstance(self,vault_addr, pool_type, asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=None ):
-        msg = { "create_pool_instance": {        pool_type: pool_type,
-            asset_infos: asset_infos,
-            lp_token_name: lp_token_name,
-            lp_token_symbol: lp_token_symbol,
-            init_params: init_params }}
+        msg = { "create_pool_instance": {        "pool_type": pool_type,
+            "asset_infos": asset_infos,
+            "lp_token_name": lp_token_name,
+            "lp_token_symbol": lp_token_symbol,
+            "init_params": init_params }}
+        print(msg)
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
@@ -191,7 +217,7 @@ class dexter_helpers_mixin():
             lp_to_mint: lp_to_mint,
             init_params: init_params }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
@@ -200,7 +226,7 @@ class dexter_helpers_mixin():
             swap_request: swap_request,
             recipient: recipient }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
@@ -209,21 +235,21 @@ class dexter_helpers_mixin():
             owner: owner,
             expires_in: expires_in }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
     def execute_vault_DropOwnershipProposal(self,vault_addr):
         msg = { "drop_ownership_proposal": {   }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
     def execute_vault_ClaimOwnership(self,vault_addr):
         msg = { "claim_ownership": {}}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
@@ -238,13 +264,28 @@ class dexter_helpers_mixin():
         cw20_send = { "send": {
             "contract_addr": vault_addr,
             "amount" : amount,
-            "msg": dict_to_b64(exit_msg)
+            "msg": self.dict_to_b64(exit_msg)
         } }
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, lp_token_addr, cw20_send)
-        tx = self.wallet.create_and_sign_tx(msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),)
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res
 
 
-    def dict_to_b64(data: dict) -> str:
+    ###############################################
+    ########### ADMIN FUNCTIONS ################
+    ###############################################
+
+    # def execute_increase_allowance(self,token_addr,recepient,amount):
+    #     msg = { "increase_allowance": {'recepient': recepient,  "amount": amount }}
+    #     convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, token_addr, msg)
+    #     tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
+    #     res = self.client.tx.broadcast(tx)
+    #     print(res)
+    #     return res
+
+
+
+
+    def dict_to_b64(self, data: dict) -> str:
         return base64.b64encode(bytes(json.dumps(data), "ascii")).decode()

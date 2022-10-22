@@ -1,0 +1,113 @@
+{
+  "contracts_store_code_proposals_executed": true,
+  "vault_store_code_proposal_id": 70,
+  "keeper_store_code_proposal_id": 71,
+  "lp_token_store_code_proposal_id": 72,
+  "xyk_pool_store_code_proposal_id": 73,
+  "weighted_pool_store_code_proposal_id": 74,
+  "stableswap_pool_store_code_proposal_id": 75,
+  "stable5swap_store_code_proposal_id": 76,
+  "vesting_store_code_proposal_id": 77,
+  "generator_store_code_proposal_id": 78,
+  "generator_proxy_store_code_proposal_id": 79,
+  "eq_staking_store_code_proposal_id": 80,
+  "vault_contract_code_id": 23,
+  "keeper_contract_code_id": 24,
+  "lp_token_contract_code_id": 25,
+  "xyk_pool_contract_code_id": 26,
+  "weighted_pool_contract_code_id": 27,
+  "stableswap_contract_code_id": 28,
+  "stable5swap_pool_contract_code_id": 29,
+  "vesting_contract_code_id": 30,
+  "generator_contract_code_id": 31,
+  "generator_proxy_contract_code_id": 32,
+  "staking_contract_contract_code_id": 33,
+  "vault_instantiate_proposal_id": 81,
+  "vault_contract_address": "persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx",
+  "dummy_tokens_instantiated": true,
+  "test_tokens_addresses": [
+    "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq",
+    "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel",
+    "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
+  ],
+  "proposals_to_update_permissions": true,
+  "lp_token_instantiate_permissions_proposal_id": 86,
+  "xyk_pool_instantiate_permissions_proposal_id": 87,
+  "stableswap_pool_instantiate_permissions_proposal_id": 88,
+  "stable5pool_instantiate_permissions_proposal_id": 89,
+  "weighted_instantiate_permissions_proposal_id": 90,
+  "keeper_contract_instantiate_proposal": "91",
+  "generator_contract_instantiate_proposal": "92",
+  "keeper_contract_addr": "persistence1m85zj4fm3u6zmcj950rj6mjwuv54r5et9al8yhcee5j3ua8keqyshv6rqf",
+  "xyk_pool_address": "persistence1y532kwl07tpqf2q8gjcfzyj3qnfp8qyax7cg4gsqpsp9pwad24tqr76llr",
+  "xyk_pool_lp_token_address": "persistence1rzdldyj687vgvmmujz5hv9nmskhnexd53erdaahc7uus337rw5ksfw38qh",
+  "xyk_pool_asset_infos": [
+    {
+      "native_token": {
+        "denom": "uxprt"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"
+      }
+    }
+  ],
+  "stableswap_pool_address": "persistence1s4683e9zlq2pd2en2gnxrqzer0jvq3cj86qgx6r69h4n3j7vcsfsg4s8gr",
+  "stableswap_pool_lp_token_address": "persistence13g54j2l7039e0py7fr8ekfesqzfd82hdwef3837zzaj9mptq3e7sgupn87",
+  "stableswap_pool_asset_infos": [
+    {
+      "token": {
+        "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"
+      }
+    }
+  ],
+  "stable5swap_pool_address": "persistence1282cl8kk03jlg8r2y8ay8z46ag72juf2wr5nwelyt7wlptclqk9qt8rhrd",
+  "stable5swap_pool_lp_token_address": "persistence1wgzzn83hhcc5asrtslqvaw2wuqqkfulgac7ze94dmqkrxu8nsensasdp76",
+  "stable5swap_pool_asset_infos": [
+    {
+      "token": {
+        "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
+      }
+    }
+  ],
+  "weighted_pool_address": "persistence1z4vk82r0g3pczlpqetegxlylyvktcr5w9lnm3kgvtavau27dhm6s52wu2e",
+  "weighted_pool_lp_token_address": "persistence1u6shqnk4k5fza2exaet4gyczc4td8drnnclgu0ngn00lurmlu3tq866sqd",
+  "weighted_pool_asset_infos": [
+    {
+      "native_token": {
+        "denom": "uxprt"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel"
+      }
+    },
+    {
+      "token": {
+        "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
+      }
+    }
+  ]
+}

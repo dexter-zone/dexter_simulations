@@ -1,6 +1,7 @@
 
-LCD_URL = "http://rest.testnet.persistence.one"
-CHAIN_ID = "test-core-1"
+LCD_URL = "https://rest.devnet.core.dexter.zone/"
+CHAIN_ID = "persistencecore"
+# CHAIN_ID = "test-core-1"
 
 
 addresses = {

@@ -17,12 +17,28 @@ class dexter_helpers_mixin():
         timestamp = block_info["block"]["header"]["time"]
         return timestamp
 
+
+    def query_token_minter(self,  contract_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"minter":{}})
+            return sim_response         
+        except:
+            return None
+
     def query_token_info(self,  contract_addr):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr , {"token_info":{}})
             return sim_response         
         except:
             return None
+
+    def execute_mint_tokens(self,contract_addr,recipient, amount ):
+        msg = { "mint": {'amount': amount, 'recipient': recipient}}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, contract_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        # tx = self.wallet.create_and_sign_tx( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
+        res = self.client.tx.broadcast(tx)
+        return res
 
     ###############################################
     ################ VAULT QUERIES ################
@@ -45,21 +61,21 @@ class dexter_helpers_mixin():
 
     def query_vault_IsGeneratorDisabled(self,  contract_addr, lp_token_addr):
         try:
-            sim_response = self.client.wasm.contract_query(contract_addr ,  { "is_generator_disabled" : { lp_token_addr: lp_token_addr }})
+            sim_response = self.client.wasm.contract_query(contract_addr ,  { "is_generator_disabled" : { "lp_token_addr": lp_token_addr }})
             return sim_response         
         except:
             return None
             
     def query_vault_GetPoolById(self,  contract_addr, pool_id):
         try:
-            sim_response = self.client.wasm.contract_query(contract_addr ,  { "get_pool_by_id" : { pool_id: pool_id }})
+            sim_response = self.client.wasm.contract_query(contract_addr ,  { "get_pool_by_id" : { "pool_id": pool_id }})
             return sim_response         
         except:
             return None
 
     def query_vault_GetPoolByAddress(self,  contract_addr, pool_addr):
         try:
-            sim_response = self.client.wasm.contract_query(contract_addr ,  { "get_pool_by_address" : { pool_addr: pool_addr }})
+            sim_response = self.client.wasm.contract_query(contract_addr ,  { "get_pool_by_address" : { "pool_addr": pool_addr }})
             return sim_response         
         except:
             return None
@@ -94,9 +110,9 @@ class dexter_helpers_mixin():
     def query_pool_on_join_pool(self,  contract_addr, assets_in=None, mint_amount=None, slippage_tolerance=None):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr , {"on_join_pool":{ 
-                assets_in: assets_in,
-                mint_amount: mint_amount,
-                slippage_tolerance: slippage_tolerance
+                "assets_in": assets_in,
+                "mint_amount": mint_amount,
+                "slippage_tolerance": slippage_tolerance
             }})
             return sim_response         
         except:
@@ -130,8 +146,8 @@ class dexter_helpers_mixin():
     def query_cumulative_price(self,  contract_addr, offer_asset, ask_asset):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr , {"cumulative_price":{ 
-            offer_asset: offer_asset,
-            ask_asset: ask_asset,
+            "offer_asset": offer_asset,
+            "ask_asset": ask_asset,
             }})
             return sim_response         
         except:
@@ -151,8 +167,8 @@ class dexter_helpers_mixin():
     ########### CW20 TRANSACTIONS & QUERIES ################
     ###############################################
 
-    def execute_increase_allowance(self,token_addr,recepient,amount):
-        msg = { "increase_allowance": {'recepient': recepient,  "amount": amount }}
+    def execute_increase_allowance(self,token_addr,spender,amount):
+        msg = { "increase_allowance": {'spender': spender,  "amount": amount }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, token_addr, msg)
         tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
@@ -176,10 +192,6 @@ class dexter_helpers_mixin():
         tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
         # tx = self.wallet.create_and_sign_tx( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
-        print(res)
-        json_object = json.dumps(res, indent=4)
-        with open("sample.json", "w") as outfile:
-            outfile.write(json_object)
         return res
 
     def execute_vault_UpdatePoolConfig(self,vault_addr,pool_type,is_disabled=None,new_fee_info=None ):
@@ -209,14 +221,16 @@ class dexter_helpers_mixin():
         return res
 
     def execute_vault_JoinPool(self,vault_addr, pool_id, recipient=None, 
-                                assets=None, lp_to_mint=None, init_params=None ):
+                                assets=None, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins=None):
         msg = { "join_pool": {         
-            pool_id: pool_id,
-            recipient: recipient,
-            assets:assets,
-            lp_to_mint: lp_to_mint,
-            init_params: init_params }}
-        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
+            "pool_id": pool_id,
+            "recipient": recipient,
+            "assets":assets,
+            "lp_to_mint": lp_to_mint,
+            "slippage_tolerance": slippage_tolerance,
+            "auto_stake": auto_stake
+             }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg, coins )
         tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res

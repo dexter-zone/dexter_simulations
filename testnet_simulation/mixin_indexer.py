@@ -13,6 +13,9 @@ class indexer_helpers_mixin():
 
         if type_ == "create_dexter_pool":
             self.create_pool_indexer_helper(indexed_tx["raw_log"])
+        
+        elif type_ == "provide_liquidity":
+            self.provide_liquidity_indexer_helper(indexed_tx["raw_log"])
 
 
     def index_tx(self,  tx_response):    
@@ -96,6 +99,94 @@ class indexer_helpers_mixin():
         # store tx
         self.dexter_pools_DF = self.dexter_pools_DF.append(pool_info, ignore_index= True)
         self.dexter_pools_DF.to_csv("./data/dexter_pools_DF.csv", index=False)
+
+
+
+    def provide_liquidity_indexer_helper(self, rawlog):
+        rawlog = json.loads(rawlog)
+        pool_info = {
+            "block_time_last": None,
+            "pool_id": None,
+            "lp_tokens_minted": None,
+            "provided_assets": None,
+            "total_pool_liquidity": None,
+        }
+
+        # Index events related to pool creation
+        events = rawlog[0]["events"]
+        for event in events:
+            # wasm-dexter-pool::update-liquidity
+            if event["type"] == "wasm-dexter-pool::update-liquidity":
+                attributes = event["attributes"]
+                for attr in attributes:
+                    if attr["key"] == "block_time_last":
+                        pool_info["block_time_last"] = attr["value"]
+                    if attr["key"] == "pool_assets":
+                        pool_info["total_pool_liquidity"] = attr["value"]
+                    if attr["key"] == "pool_id":
+                        pool_info["pool_id"] = attr["value"]
+
+            # wasm-dexter-vault::join_pool
+            if event["type"] == "wasm-dexter-vault::join_pool":
+                attributes = event["attributes"]
+                for attr in attributes:
+                    if attr["key"] == "lp_tokens_minted":
+                        pool_info["lp_tokens_minted"] = attr["value"]
+                    if attr["key"] == "provided_assets":
+                        pool_info["provided_assets"] = attr["value"]
+                   
+        # store tx
+        self.provide_liquidity_txs_DF = self.provide_liquidity_txs_DF.append(pool_info, ignore_index= True)
+        self.provide_liquidity_txs_DF.to_csv("./data/provide_liquidity_txs_DF.csv", index=False)
+
+
+
+# [{"events":[
+#     {"type":"coin_received",
+#     "attributes":[{"key":"receiver","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"amount","value":"6250000uxprt"},{"key":"receiver","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"amount","value":"6249999uxprt"}]},
+    
+#     {"type":"coin_spent",
+#     "attributes":[{"key":"spender","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"amount","value":"6250000uxprt"},{"key":"spender","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"amount","value":"6249999uxprt"}]},
+    
+#     {"type":"execute",
+#     "attributes":[{"key":"_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"_contract_address","value":"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"},{"key":"_contract_address","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"},{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"}]},
+    
+#     {"type":"message",
+#     "attributes":[{"key":"action","value":"/cosmwasm.wasm.v1.MsgExecuteContract"},{"key":"module","value":"wasm"},{"key":"sender","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"}]},
+    
+#     {"type":"transfer",
+#     "attributes":[{"key":"recipient","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"sender","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"amount","value":"6250000uxprt"},{"key":"recipient","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"sender","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"amount","value":"6249999uxprt"}]},
+    
+#     {"type":"wasm",
+#     "attributes":[{"key":"_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"action","value":"dexter-vault/execute/join_pool"},{"key":"_contract_address","value":"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"},{"key":"action","value":"transfer_from"},{"key":"amount","value":"1"},{"key":"by","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"from","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"to","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"},{"key":"action","value":"mint"},{"key":"amount","value":"1"},{"key":"to","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"}]},
+    
+#     {"type":"wasm-dexter-pool::update-liquidity",
+#     "attributes":[{"key":"_contract_address","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"},
+#                     {"key":"block_time_last","value":"1666444386"},
+#                     {"key":"pool_assets","value":"[{\"info\":{\"token\":{\"contract_addr\":\"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq\"}},\"amount\":\"1\"},{\"info\":{\"native_token\":{\"denom\":\"uxprt\"}},\"amount\":\"1\"}]"},
+#                     {"key":"pool_id","value":"20"},
+#                     {"key":"vault_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]},
+    
+#     {"type":"wasm-dexter-vault::join_pool",
+#     "attributes":[{"key":"_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},
+#                     {"key":"pool_id","value":"20"},
+#                     {"key":"pool_addr","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"},
+#                     {"key":"lp_tokens_minted","value":"1"},
+#                     {"key":"provided_assets","value":"[{\"info\":{\"token\":{\"contract_addr\":\"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq\"}},\"amount\":\"1\"},{\"info\":{\"native_token\":{\"denom\":\"uxprt\"}},\"amount\":\"1\"}]"},
+#                     {"key":"recipient","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"}]}]}]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

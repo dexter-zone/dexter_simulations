@@ -134,14 +134,15 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # return
 
         # ---xxxx----  Create Weighted Pool ---xxxx---- 
-        # weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
-        #            {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
-        #            {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
-        #            {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
-        #         ]
-        # init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
-        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+        weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
+                   {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
+                   {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
+                   {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
+                ]
+        init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
+        create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+        return
 
 
 
@@ -200,7 +201,26 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(provide_liquidity_to_pool_tx)
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
-       # ---xxxx---- Provide Liquidity Stable-5-Swap Pool ---xxxx---
+       # ---xxxx---- Provide Liquidity Stable-5-Swap Pool :: Needs to be fixed ---xxxx---
+        pool_id = '27'
+        pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
+        assets_in = [
+            { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
+                    # {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
+                    ]
+        slippage_tolerance = None
+
+        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
+        # print(provide_liquidity_to_pool_query)
+
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # print(provide_liquidity_to_pool_tx)
+        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+
+       # ---xxxx---- Provide Liquidity WEIGHTED Pool ---xxxx---
+
         pool_id = '27'
         pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
         assets_in = [
@@ -225,8 +245,6 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         
         res = self.query_cumulative_prices(pool_addr)
         print(res)
-
-
 
         # self.get_block_timestamp()
         # return

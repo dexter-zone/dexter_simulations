@@ -51,6 +51,12 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         except:
             self.swap_txs_DF = pd.DataFrame([], columns = ['block_time_last','txhash', 'pool_id', 'offer_asset', 'offer_amount', 'ask_asset', 'ask_amount', 'swap_type', 'total_fee', 'fee_asset', 'total_pool_liquidity' ])
 
+        # Remove Liquidity Txs List DF
+        try:
+            self.remove_liquidity_txs_DF = pd.read_csv ("./data/remove_liquidity_txs_DF.csv")
+        except:
+            self.remove_liquidity_txs_DF = pd.DataFrame([], columns = ['block_time_last','txhash', 'pool_id', 'pool_addr', 'lp_tokens_burnt', 'assets_out', 'recipient_addr' ])
+
 
         # 
         # return
@@ -102,66 +108,8 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(f"\nVAULT Contract - Query Pool by addr = {pool_info_by_addr}")
 
 
-        #------------------------------------------------  DEXTER POOLS -::- CREATION  ------------------------------------------------
-
-        asset_infos = [
-            { "native_token": { "denom": "uxprt" } },
-             { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
-             { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } },
-             { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
-        ]
-
-        # ---xxxx---- Create XYK Pool ---xxxx---
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["xyk"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=None  )
-        # # print(create_pool_tx)
-        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
-
-        # ---xxxx---- Create Stableswap Pool ---xxxx---- 
-        # init_params = self.dict_to_b64({ "amp": 10 })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable2Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
-        # # print(create_pool_tx)
-        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
-
-        # asset_infos = [
-        #     { "native_token": { "denom": "uxprt" } },
-        #     { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
-        #     { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
-        #     { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
-        # ]
-
-        # res = self.query_token_info("persistence1u2zdjcczjrenwmf57fmrpensk4the84azdm05m3unm387rm8asdsh0yf27")
-        # print(res)
-        # return
-
-        # ---xxxx----  Create Stable-5-swap Pool ---xxxx---- 
-        # init_params = self.dict_to_b64({ "amp": 10 })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable5Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
-        # print(create_pool_tx)
-        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
-        # return
-
-        # ---xxxx----  Create Weighted Pool ---xxxx---- 
-        # weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
-        #            {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
-        #            {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
-        #            {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
-        #         ]
-        # init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
-        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
-        # return
-
-
-
-        #------------------------------------------------  DEXTER POOLS -::- PROVIDE LIQUIDITY  ------------------------------------------------
-
-        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
-        # self.index_and_store_tx(increase_allowance_tx)
-        # return
-
-        # pool_config = self.query_pool_config("persistence1dglg47995fhw79pgr4lp0evjpp7uxeuq9mvtrmaf7hl3j00n20xsgue4dl")
-        # print(pool_config)
+        #------------------------------------------------  TOKENS - Helper queries and functions  ------------------------------------------------
+        #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
 
         # token_addr = "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
         # res = self.query_token_info(token_addr)
@@ -177,223 +125,421 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # res = self.query_balance(token_addr, self.wallet_addr)
         # print(res)
 
-        # return
+        # token_balance = self.query_balance("persistence1vguuxez2h5ekltfj9gjd62fs5k4rl2zy5hfrncasykzw08rezpfst7tmng", self.wallet_addr)
+        # print(token_balance)
 
-       # ---xxxx---- Provide Liquidity XYK Pool ---xxxx---
-        # pool_id = '20'
-        # pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
-        # assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'100' }]
-        # slippage_tolerance = None
+        #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
+        #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
+
+        self.simulate_xyk_pool()
+        self.simulate_stableswap_pool()
+        self.simulate_stable5swap_pool()
+        self.simulate_weighted_pool()
+        
+        #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
+        #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
+
+
+        # ---xxxx---- DEXTER -::- Generator Txs ---xxxx---
+
+
+
+
+
+        
+    '''
+    XYK Pool
+    Functions for executing transactions / querying XYK Pool. 
+    TO be used for simulating pool performance
+    '''
+    def simulate_xyk_pool(self):
+
+        asset_infos = [
+            { "native_token": { "denom": "uxprt" } },
+             { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
+        ]
+        pool_id = '20'
+        pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
+        lp_token_addr = "persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"
+
+        # ---xxxx---- Create XYK Pool ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["xyk"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=None  )
+        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+
+
+        # ---xxxx---- Provide Liquidity XYK Pool ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
+        assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+                    {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'100' }]
+        slippage_tolerance = None
 
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # # print(provide_liquidity_to_pool_query)
 
         # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
-        # # print(provide_liquidity_to_pool_tx)
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
 
-       # ---xxxx---- Provide Liquidity StableSwap Pool ---xxxx---
-        # pool_id = '21'
-        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
-        # assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }]
-        # slippage_tolerance = None
+        # ---xxxx---- SWAP Tokens :: XYK Pool ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
 
-        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
-        # print(provide_liquidity_to_pool_query)
+        swap_request = {
+            "pool_id":pool_id,
+            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+            "asset_out":  { "native_token": {"denom": "uxprt"} },
+            "swap_type": { "give_in":{} },
+            "amount": '100',
+            "max_spread": '0.5',
+            "belief_price": None
+        }
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
-        # print(provide_liquidity_to_pool_tx)
-        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        # print(swap_via_pool_query)
 
-       # ---xxxx---- Provide Liquidity Stable-5-Swap Pool :: Needs to be fixed ---xxxx---
-        # pool_id = '27'
-        # pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
-        # assets_in = [
-        #     { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-        #     { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
-        #     { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
-        #             # {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
-        #             ]
-        # slippage_tolerance = None
+        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
-        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
-        # print(provide_liquidity_to_pool_query)
+        # ---xxxx---- Remove Liquidity :: XYK Pool ---xxxx---
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
-        # print(provide_liquidity_to_pool_tx)
-        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+        assets_out = None
+        burn_amount = '10'
 
-        # return
+        # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
+        # print(remove_liquidity_to_pool_query)
 
-       # ---xxxx---- Provide Liquidity WEIGHTED Pool ---xxxx---
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
-        # pool_id = '28'
-        # pool_addr = "persistence189y9w6tj56g72ud8vjce0vfnkse6v7rp3jjuqkavugnwgduqqj7qzjsh3g"
-        # assets_in = [
-        #     { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-        #     { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
-        #     { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
-        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
-        #             ]
-        # slippage_tolerance = None
+        # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
 
-        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
-        # print(provide_liquidity_to_pool_query)
+        # Query Pool Config : Query 
+        # res = self.query_pool_config(pool_addr)
+        # print(res)
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
-        # print(provide_liquidity_to_pool_tx)
-        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
-        
-        # Query Cumulative Prices : Query 
+        # Query Fee params : Query 
+        # res = self.query_pool_fee_params(pool_addr)
+        # print(res)
+
+        # Query Pool Id : Query 
+        # res = self.query_pool_id(pool_addr)
+        # print(res)
+
+        # Query Cumulative Price for token : Query 
         # offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
         # ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
         # res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
         # print(res)
         
+        # Query Cumulative Prices : Query 
         # res = self.query_cumulative_prices(pool_addr)
         # print(res)
 
-        #------------------------------------------------  DEXTER POOLS -::- SWAPS  ------------------------------------------------
-
-        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when swapping
+        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
         # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
         # self.index_and_store_tx(increase_allowance_tx)
-        # return
 
-        # res = self.query_pool_config("persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa")
-        # print(res)
-        # return
+     
+    '''
+    STABLESWAP Pool
+    Functions for executing transactions / querying stableswap Pool. 
+    TO be used for simulating pool performance
+    '''
+    def simulate_stableswap_pool(self):
+        
+        asset_infos = [
+            { "native_token": { "denom": "uxprt" } },
+             { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
+        ]
+        pool_id = '21'
+        pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
+        lp_token_addr = "persistence16jg37axpyr7wwqjmm5mhnvzxh4xjfguy0u7zhc0382scepd9jugshc7ndp"
 
-        # ---xxxx---- SWAP Tokens :: XYK Pool ---xxxx---
 
-        # pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
-        # swap_request = {
-        #     "pool_id": '20',
-        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
-        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
-        #     "swap_type": { "give_in":{} },
-        #     "amount": '100',
-        #     "max_spread": '0.5',
-        #     "belief_price": None
-        # }
-        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
-        # print(swap_via_pool_query)
+        # ---xxxx---- Create Stableswap Pool ---xxxx---- 
+       
+        # init_params = self.dict_to_b64({ "amp": 10 })
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable2Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
 
-        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
-        # print(swap_via_pool_tx)
-        # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+
+       # ---xxxx---- Provide Liquidity StableSwap Pool ---xxxx---
+
+        assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+                    {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }]
+        slippage_tolerance = None
+
+        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
+        # print(provide_liquidity_to_pool_query)
+
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+
 
         # ---xxxx---- SWAP Tokens :: StableSwap Pool ---xxxx---
 
-        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
-        # swap_request = {
-        #     "pool_id": '21',
-        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
-        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
-        #     "swap_type": { "give_in":{} },
-        #     "amount": '100',
-        #     "max_spread": '0.5',
-        #     "belief_price": None
-        # }
+        swap_request = {
+            "pool_id": pool_id,
+            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+            "asset_out":  { "native_token": {"denom": "uxprt"} },
+            "swap_type": { "give_in":{} },
+            "amount": '100',
+            "max_spread": '0.5',
+            "belief_price": None
+        }
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
         # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
-        # print(swap_via_pool_tx)
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+        # ---xxxx---- Remove Liquidity :: StableSwap Pool ---xxxx---
+
+        assets_out = None
+        burn_amount = '10'
+
+        # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
+        # print(remove_liquidity_to_pool_query)
+
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
+
+        # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
+
+        # Query Pool Config : Query 
+        # res = self.query_pool_config(pool_addr)
+        # print(res)
+
+        # Query Fee params : Query 
+        # res = self.query_pool_fee_params(pool_addr)
+        # print(res)
+
+        # Query Pool Id : Query 
+        # res = self.query_pool_id(pool_addr)
+        # print(res)
+
+        # Query Cumulative Price for token : Query 
+        # offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
+        # ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
+        # res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
+        # print(res)
+        
+        # Query Cumulative Prices : Query 
+        # res = self.query_cumulative_prices(pool_addr)
+        # print(res)
+
+        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # self.index_and_store_tx(increase_allowance_tx)
+
+
+     
+    '''
+    STABLE-5-SWAP Pool
+    Functions for executing transactions / querying stable-5-swap Pool. 
+    TO be used for simulating pool performance
+    '''
+    def simulate_stable5swap_pool(self):
+
+        asset_infos = [
+            { "native_token": { "denom": "uxprt" } },
+             { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
+             { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } },
+             { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
+        ]
+        pool_id = '27'
+        pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
+        lp_token_addr = "persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"
+
+
+        # ---xxxx----  Create Stable-5-swap Pool ---xxxx---- 
+
+        # res = self.query_token_info("persistence1u2zdjcczjrenwmf57fmrpensk4the84azdm05m3unm387rm8asdsh0yf27")
+        # print(res)
+
+        init_params = self.dict_to_b64({ "amp": 10 })
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable5Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+
+
+       # ---xxxx---- Provide Liquidity Stable-5-Swap Pool :: Needs to be fixed ---xxxx---
+
+        assets_in = [
+            { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
+                    ]
+        slippage_tolerance = None
+
+        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
+        # print(provide_liquidity_to_pool_query)
+
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
 
         # ---xxxx---- SWAP Tokens :: Stable-5-Swap Pool ---xxxx---
 
-        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
-        # swap_request = {
-        #     "pool_id": '21',
-        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
-        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
-        #     "swap_type": { "give_in":{} },
-        #     "amount": '100',
-        #     "max_spread": '0.5',
-        #     "belief_price": None
-        # }
+        swap_request = {
+            "pool_id": pool_id,
+            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+            "asset_out":  { "native_token": {"denom": "uxprt"} },
+            "swap_type": { "give_in":{} },
+            "amount": '100',
+            "max_spread": '0.5',
+            "belief_price": None
+        }
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
         # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
-        # print(swap_via_pool_tx)
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
+
+        # ---xxxx---- Remove Liquidity :: Stable-5-swap Pool ---xxxx---
+
+        assets_out = None
+        burn_amount = '10'
+
+        # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
+        # print(remove_liquidity_to_pool_query)
+
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
+
+        # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
+
+        # Query Pool Config : Query 
+        # res = self.query_pool_config(pool_addr)
+        # print(res)
+
+        # Query Fee params : Query 
+        # res = self.query_pool_fee_params(pool_addr)
+        # print(res)
+
+        # Query Pool Id : Query 
+        # res = self.query_pool_id(pool_addr)
+        # print(res)
+
+        # Query Cumulative Price for token : Query 
+        # offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
+        # ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
+        # res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
+        # print(res)
+        
+        # Query Cumulative Prices : Query 
+        # res = self.query_cumulative_prices(pool_addr)
+        # print(res)
+
+        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # self.index_and_store_tx(increase_allowance_tx)
+
+
+    '''
+    WEIGHTED Pool
+    Functions for executing transactions / querying Weighted Pool. 
+    TO be used for simulating pool performance
+    '''
+    def simulate_weighted_pool(self):
+        
+        asset_infos = [
+            { "native_token": { "denom": "uxprt" } },
+             { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
+             { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } },
+             { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
+        ]
+        pool_id = '28'
+        pool_addr = "persistence189y9w6tj56g72ud8vjce0vfnkse6v7rp3jjuqkavugnwgduqqj7qzjsh3g"
+        lp_token_addr = "persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"
+
+        # ---xxxx----  Create Weighted Pool ---xxxx---- 
+
+        weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
+                   {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
+                   {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
+                   {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
+                ]
+        init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+
+
+       # ---xxxx---- Provide Liquidity WEIGHTED Pool ---xxxx---
+
+        assets_in = [
+            { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
+            { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
+                    {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
+                    ]
+        slippage_tolerance = None
+
+        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
+        # print(provide_liquidity_to_pool_query)
+
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+        
 
         # ---xxxx---- SWAP Tokens :: Weighted Pool ---xxxx---
 
-        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
-        # swap_request = {
-        #     "pool_id": '21',
-        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
-        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
-        #     "swap_type": { "give_in":{} },
-        #     "amount": '100',
-        #     "max_spread": '0.5',
-        #     "belief_price": None
-        # }
+        swap_request = {
+            "pool_id": pool_id,
+            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+            "asset_out":  { "native_token": {"denom": "uxprt"} },
+            "swap_type": { "give_in":{} },
+            "amount": '100',
+            "max_spread": '0.5',
+            "belief_price": None
+        }
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
         # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
-        # print(swap_via_pool_tx)
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
-        #------------------------------------------------  DEXTER POOLS -::- REMOVE Liquidity  ------------------------------------------------
 
+        # ---xxxx---- Remove Liquidity :: Weighted Pool ---xxxx---
 
-        # pool_id = '20'
-        # pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
-        # assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'100' }]
-        # slippage_tolerance = None
+        assets_out = None
+        burn_amount = '10'
 
-        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
-        # # print(provide_liquidity_to_pool_query)
+        # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
+        # print(remove_liquidity_to_pool_query)
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
-        # # print(provide_liquidity_to_pool_tx)
-        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # print(remove_liquidity_to_pool_tx)
+        # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
+        # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
 
+        # Query Pool Config : Query 
+        # res = self.query_pool_config(pool_addr)
+        # print(res)
 
+        # Query Fee params : Query 
+        # res = self.query_pool_fee_params(pool_addr)
+        # print(res)
 
+        # Query Pool Id : Query 
+        # res = self.query_pool_id(pool_addr)
+        # print(res)
 
-        # self.get_block_timestamp()
-        # return
-
-        # execute_increase_allowance_tx = self.execute_increase_allowance("persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel", "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" ,1)
-        # print(execute_increase_allowance_tx)
-        # self.index_and_store_tx([execute_increase_allowance_tx])
-
-
-
-        # res = self.query_pool_config("persistence1lxansfc8vkujy997e3xksd3ugsppv6a9jt32pjtgaxr0zkcnkznqu22a4s")
-        # id_res = self.query_pool_id("persistence1lxansfc8vkujy997e3xksd3ugsppv6a9jt32pjtgaxr0zkcnkznqu22a4s")
-        # print(id_res)
-
-        # token_balance = self.query_balance("persistence1vguuxez2h5ekltfj9gjd62fs5k4rl2zy5hfrncasykzw08rezpfst7tmng", self.wallet_addr)
-        # print(token_balance)
-
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1vguuxez2h5ekltfj9gjd62fs5k4rl2zy5hfrncasykzw08rezpfst7tmng", VAULT_ADDR, 1000000000)
-        # print(increase_allowance_tx)
-
-
-        # pool_assets = res['assets']
-        # print("Pool Assets")
-        # for asset in pool_assets:
-        #     print(asset["info"])
-            # if asset["info"].get("native_token"):
-            #     print("Native Token")
-
-        # self.execute_vault_JoinPool(1, None, )
+        # Query Cumulative Price for token : Query 
+        # offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
+        # ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
+        # res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
+        # print(res)
         
+        # Query Cumulative Prices : Query 
+        # res = self.query_cumulative_prices(pool_addr)
+        # print(res)
+
+        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # self.index_and_store_tx(increase_allowance_tx)
+
+
+
 
 
 

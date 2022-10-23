@@ -22,6 +22,11 @@ class indexer_helpers_mixin():
         elif type_ == "swap":
             self.swap_indexer_helper(indexed_tx["txhash"], indexed_tx["raw_log"])
 
+        elif type_ == "remove_liquidity":
+            self.remove_liquidity_indexer_helper(indexed_tx["txhash"], indexed_tx["raw_log"])
+
+            
+
 
 
     def index_tx(self,  tx_response):    
@@ -200,6 +205,67 @@ class indexer_helpers_mixin():
         # df = pd.concat([df, pd.DataFrame.from_records([{ 'a': 1, 'b': 2 }])])
         self.swap_txs_DF = pandas.concat([self.swap_txs_DF, pandas.DataFrame.from_records([swap_info])])
         self.swap_txs_DF.to_csv("./data/swap_txs_DF.csv", index=False)
+
+
+    def remove_liquidity_indexer_helper(self, txhash, rawlog):
+        rawlog = json.loads(rawlog)
+        tx_info = {
+            "block_time_last": None,
+            "txhash": txhash,
+            "pool_id": None,
+            "pool_addr": None,
+            "lp_tokens_burnt": None,
+            "assets_out": None,
+            "recipient_addr": None,
+        }
+
+        # Index events related to pool creation
+        events = rawlog[0]["events"]
+        for event in events:
+            # wasm-dexter-pool::update-liquidity
+            if event["type"] == "wasm-dexter-pool::update-liquidity":
+                attributes = event["attributes"]
+                for attr in attributes:
+                    if attr["key"] == "block_time_last":
+                        tx_info["block_time_last"] = attr["value"]
+                    if attr["key"] == "pool_assets":
+                        tx_info["total_pool_liquidity"] = attr["value"]
+                    if attr["key"] == "pool_id":
+                        tx_info["pool_id"] = attr["value"]
+
+            # wasm-dexter-vault::swap
+            if event["type"] == "wasm-dexter-vault::exit_pool":
+                attributes = event["attributes"]
+                for attr in attributes:
+                    if attr["key"] == "assets_out":
+                        tx_info["assets_out"] = attr["value"]
+                    if attr["key"] == "lp_tokens_burnt":
+                        tx_info["lp_tokens_burnt"] = attr["value"]
+                    if attr["key"] == "recipient_addr":
+                        tx_info["recipient_addr"] = attr["value"]
+        # store tx
+        self.remove_liquidity_txs_DF = self.remove_liquidity_txs_DF.append(tx_info, ignore_index= True)
+        self.remove_liquidity_txs_DF.to_csv("./data/remove_liquidity_txs_DF.csv", index=False)
+
+
+# [{"events":[{"type":"coin_received","attributes":[{"key":"amount","value":"6uxprt"},{"key":"receiver","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"}]},
+# {"type":"coin_spent","attributes":[{"key":"amount","value":"6uxprt"},{"key":"spender","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]},
+# {"type":"execute","attributes":[{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"},{"key":"_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"_contract_address","value":"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"},{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"},{"key":"_contract_address","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"}]},
+# {"type":"message","attributes":[{"key":"action","value":"/cosmwasm.wasm.v1.MsgExecuteContract"},{"key":"module","value":"wasm"},{"key":"sender","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"}]},
+# {"type":"transfer","attributes":[{"key":"amount","value":"6uxprt"},{"key":"recipient","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"sender","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]},
+# {"type":"wasm","attributes":[{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"},{"key":"action","value":"send"},{"key":"from","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"to","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"amount","value":"10"},{"key":"_contract_address","value":"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"},{"key":"action","value":"transfer"},{"key":"amount","value":"15"},{"key":"from","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},{"key":"to","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},{"key":"_contract_address","value":"persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"},{"key":"action","value":"burn"},{"key":"amount","value":"10"},{"key":"from","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]},
+
+# {"type":"wasm-dexter-pool::update-liquidity","attributes":[{"key":"_contract_address","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"},{"key":"block_time_last","value":"1666503962"},{"key":"pool_assets","value":"[{\"info\":{\"token\":{\"contract_addr\":\"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq\"}},\"amount\":\"596\"},{\"info\":{\"native_token\":{\"denom\":\"uxprt\"}},\"amount\":\"261\"}]"},{"key":"pool_id","value":"20"},{"key":"vault_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]},
+
+# {"type":"wasm-dexter-vault::exit_pool","attributes":[
+#     {"key":"_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"},
+#     {"key":"assets_out","value":"[{\"info\":{\"token\":{\"contract_addr\":\"persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq\"}},\"amount\":\"15\"},{\"info\":{\"native_token\":{\"denom\":\"uxprt\"}},\"amount\":\"6\"}]"},
+#     {"key":"lp_tokens_burnt","value":"10"},
+#     {"key":"pool_addr","value":"persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"},
+#     {"key":"pool_id","value":"20"},
+#     {"key":"recipient_addr","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},
+#     {"key":"sender","value":"persistence1pss7nxeh3f9md2vuxku8q99femnwdjtcpe9ky9"},
+#     {"key":"vault_contract_address","value":"persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"}]}]}]
 
 
 

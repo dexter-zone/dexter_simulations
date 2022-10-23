@@ -33,3 +33,9 @@ To work with persistence devnet, you need to add the following chain id config w
    ```
    python3 main.py
    ```
+
+   Or, to clear the console each time, run:
+   
+   ```
+   make
+   ```

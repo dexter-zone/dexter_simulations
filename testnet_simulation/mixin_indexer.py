@@ -1,5 +1,7 @@
 import json
 
+import pandas
+
 
 class indexer_helpers_mixin():
 
@@ -43,7 +45,8 @@ class indexer_helpers_mixin():
         if indexed_tx_response["timestamp"] == None:
             indexed_tx_response["timestamp"] = self.get_block_timestamp()
         # store tx
-        self.tx_snapshots_DF = self.tx_snapshots_DF.append(indexed_tx_response, ignore_index= True)
+        # self.tx_snapshots_DF = self.tx_snapshots_DF.append(indexed_tx_response, ignore_index= True)
+        self.tx_snapshots_DF = pandas.concat([self.tx_snapshots_DF, pandas.DataFrame(indexed_tx_response, index=[0])], ignore_index=True)
         self.tx_snapshots_DF.to_csv("./data/tx_snapshots.csv", index=False)
 
 
@@ -193,7 +196,9 @@ class indexer_helpers_mixin():
                     if attr["key"] == "total_fee":
                         swap_info["total_fee"] = attr["value"]
         # store tx
-        self.swap_txs_DF = self.swap_txs_DF.append(swap_info, ignore_index= True)
+        # self.swap_txs_DF = self.swap_txs_DF.append(swap_info, ignore_index= True)
+        # df = pd.concat([df, pd.DataFrame.from_records([{ 'a': 1, 'b': 2 }])])
+        self.swap_txs_DF = pandas.concat([self.swap_txs_DF, pandas.DataFrame.from_records([swap_info])])
         self.swap_txs_DF.to_csv("./data/swap_txs_DF.csv", index=False)
 
 

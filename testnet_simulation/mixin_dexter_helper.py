@@ -121,8 +121,8 @@ class dexter_helpers_mixin():
     def query_pool_on_exit_pool(self,  contract_addr, assets_out=None, burn_amount=None):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr , {"on_exit_pool":{ 
-                assets_out: assets_out,
-                burn_amount: burn_amount
+                "assets_out": assets_out,
+                "burn_amount": burn_amount
             }})
             return sim_response         
         except:
@@ -276,12 +276,228 @@ class dexter_helpers_mixin():
                     "burn_amount": burn_amount,
                 }}
         cw20_send = { "send": {
-            "contract_addr": vault_addr,
+            "contract": vault_addr,
             "amount" : amount,
             "msg": self.dict_to_b64(exit_msg)
         } }
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, lp_token_addr, cw20_send)
         tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
+        res = self.client.tx.broadcast(tx)
+        return res
+
+
+
+    ############################################################
+    ################ DEXTER GENERATOR - QUERIES ################
+    ############################################################
+
+    def query_gen_config(self,  contract_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"config":{  }})
+            return sim_response         
+        except:
+            return None
+
+    # Returns the length of the array that contains all the active pool generators
+    def query_gen_ActivePoolLength(self,  contract_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"active_pool_length":{  }})
+            return sim_response         
+        except:
+            return None
+
+    # PoolLength returns the length of the array that contains all the instantiated pool generators
+    def query_gen_PoolLength(self,  contract_addr):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"pool_length":{  }})
+            return sim_response         
+        except:
+            return None
+
+    # Deposit returns the LP token amount deposited in a specific generator
+    def query_gen_deposit(self,  contract_addr, lp_token, user_addr ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"deposit":{ "lp_token": lp_token, "user": user_addr   }})
+            return sim_response         
+        except:
+            return None
+
+    # PendingToken returns the amount of rewards that can be claimed by an account that deposited a specific LP token in a generator
+    def query_gen_pending_token(self,  contract_addr, lp_token, user_addr ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"pending_token":{ "lp_token": lp_token, "user": user_addr   }})
+            return sim_response         
+        except:
+            return None
+
+
+    # RewardInfo returns reward information for a specified LP token
+    def query_gen_RewardInfo(self,  contract_addr, lp_token ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"reward_info":{ "lp_token": lp_token }})
+            return sim_response         
+        except:
+            return None
+
+
+    # OrphanProxyRewards returns orphaned reward information for the specified LP token
+    def query_gen_OrphanProxyRewards(self,  contract_addr, lp_token ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"orphan_proxy_rewards":{ "lp_token": lp_token }})
+            return sim_response         
+        except:
+            return None
+
+    #  PoolInfo returns information about a pool associated with the specified LP token alongside
+    #  the total pending amount of DEX and proxy rewards claimable by generator stakers (for that LP token)
+    def query_gen_PoolInfo(self,  contract_addr, lp_token ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"pool_info":{ "lp_token": lp_token }})
+            return sim_response         
+        except:
+            return None
+
+
+    # 
+    def query_gen_UserInfo(self,  contract_addr, lp_token, user_addr ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"user_info":{ "lp_token": lp_token, "user": user_addr   }})
+            return sim_response         
+        except:
+            return None
+
+
+    # SimulateFutureReward returns the amount of DEX that will be distributed until a future block and for a specific generator
+    def query_gen_SimulateFutureReward(self,  contract_addr, lp_token, future_block ):
+        try:
+            sim_response = self.client.wasm.contract_query(contract_addr , {"simulate_future_reward":{ "lp_token": lp_token, "future_block": future_block   }})
+            return sim_response         
+        except:
+            return None
+
+    ######################################################################
+    ################ DEXTER GENERATOR - STATE TRANSITIONS ################
+    ######################################################################
+
+    # Failitates updating some of the configuration param of the Dexter Generator Contract
+    def execute_generator_UpdateConfig(self,generator_addr,dex_token=None,vesting_contract=None,checkpoint_generator_limit=None, unbonding_period=None ):
+        msg = { "update_config": {'dex_token': dex_token,  "vesting_contract": vesting_contract, "checkpoint_generator_limit":checkpoint_generator_limit, "unbonding_period":unbonding_period  }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    # Set a new amount of DEX tokens to distribute per block
+    def execute_generator_SetTokensPerBlock(self,generator_addr,amount ):
+        msg = { "set_tokens_per_block": {'amount': amount}}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    # Setup generators with their respective allocation points.
+    def execute_generator_SetupPools(self,generator_addr,pools, ):
+        msg = { "setup_pools": {'pools': pools }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    # Failitates updating some of the configuration param of the Dexter Generator Contract
+    def execute_generator_SetupProxyForPool(self,generator_addr,lp_token,proxy_addr):
+        msg = { "setup_proxy_for_pool": {'lp_token': lp_token,  "proxy_addr": proxy_addr }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    # Allowed reward proxy contracts that can interact with the Generator
+    def execute_generator_set_allowed_reward_proxies(self,generator_addr,proxies):
+        msg = { "set_allowed_reward_proxies": {'proxies': proxies }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #  Sends orphan proxy rewards (which were left behind after emergency withdrawals) to another address
+    def execute_generator_SendOrphanProxyReward(self,generator_addr,recipient, lp_token ):
+        msg = { "send_orphan_proxy_reward": { 'recipient':recipient, 'lp_token': lp_token }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+
+    #  Add or remove a proxy contract that can interact with the Generator
+    def execute_generator_UpdateAllowedProxies(self,generator_addr,add=None, remove=None ):
+        msg = { "update_allowed_proxies": { 'add':add, 'remove': remove }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #   Sets the allocation point to zero for the specified pool
+    def execute_generator_DeactivatePool(self,generator_addr,lp_token ):
+        msg = { "deactivate_pool": { 'lp_token':lp_token }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+
+    #    Update rewards and transfer them to user.
+    def execute_generator_ClaimRewards(self,generator_addr,lp_tokens ):
+        msg = { "claim_rewards": { 'lp_tokens':lp_tokens }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #     Unstake LP tokens from the Generator. LP tokens need to be unbonded for a period of time before they can be withdrawn.
+    def execute_generator_Unstake(self,generator_addr,lp_token, amount ):
+        msg = { "unstake": { 'lp_token':lp_token, "amount":amount }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #    Unstake LP tokens from the Generator without withdrawing outstanding rewards.  LP tokens need to be unbonded for a period of time before they can be withdrawn.
+    def execute_generator_EmergencyUnstake(self,generator_addr,lp_token ):
+        msg = { "emergency_unstake": { 'lp_token':lp_token }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #    Unlock and withdraw LP tokens from the Generator
+    def execute_generator_Unlock(self,generator_addr,lp_token ):
+        msg = { "unlock": { 'lp_token':lp_token }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #    Deposit performs a token deposit on behalf of the message sender.
+    def execute_generator_Deposit(self,generator_addr, lp_token_addr, amount ):
+        cw20_send = { "send": {
+            "contract": generator_addr,
+            "amount" : amount,
+            "msg": self.dict_to_b64({ "deposit": { }})
+        } }
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, lp_token_addr, cw20_send)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
+        res = self.client.tx.broadcast(tx)
+        return res
+
+    #    Deposit performs a token deposit on behalf of the message sender.
+    def execute_generator_DepositFor(self,generator_addr, lp_token_addr, amount, deposit_for_addr ):
+        cw20_send = { "send": {
+            "contract": generator_addr,
+            "amount" : amount,
+            "msg": self.dict_to_b64({ "deposit_for": { "beneficiary": deposit_for_addr }})
+        } }
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, lp_token_addr, cw20_send)
+        tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
         res = self.client.tx.broadcast(tx)
         return res
 

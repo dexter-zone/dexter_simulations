@@ -61,15 +61,15 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # 
         # return
 
-        VAULT_ADDR = "persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"
-        TOKEN_ADDR = [
+        self.VAULT_ADDR = "persistence1wqchrjh07e3kxaee59yrpzckwr94j03zchmdslypvkv6ps0684ms3yd9xx"
+        self.TOKEN_ADDR = [
             {},
             {"symbol": "C-LUNC", "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"},
             {"symbol": "C-OSMO", "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel"},
             {"symbol": "C-JUNO", "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"},
         ]
 
-        POOL_TYPES = {
+        self.POOL_TYPES = {
             "xyk": {"xyk":{}},
             "Stable2Pool": {"stable2_pool":{}},
             "Stable5Pool": {"stable5_pool":{}},
@@ -77,52 +77,52 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         }
 
         # Set generator address in Vault contract
-        # update_vault_config_generator_addr_tx = self.execute_vault_UpdateConfig(VAULT_ADDR, None ,None , "persistence12xtk58t59tnv36zcuyzv3lda4emvugcl9y4ar7tavjqzl29dyhgs9039fz")
+        # update_vault_config_generator_addr_tx = self.execute_vault_UpdateConfig(self.VAULT_ADDR, None ,None , "persistence12xtk58t59tnv36zcuyzv3lda4emvugcl9y4ar7tavjqzl29dyhgs9039fz")
         # print(update_vault_config_generator_addr_tx)
 
         #------------------------------------------------  VAULT -::- QUERIES  ------------------------------------------------
         #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
 
-        # vault_config = self.query_vault_config(VAULT_ADDR)
+        # vault_config = self.query_vault_config(self.VAULT_ADDR)
         # print(f"\nVAULT Contract Config = {vault_config}")
         
-        # vault_registry = self.query_vault_query_registery(VAULT_ADDR, POOL_TYPES["xyk"]  )
+        # vault_registry = self.query_vault_query_registery(self.VAULT_ADDR, self.POOL_TYPES["xyk"]  )
         # print(f"\nVAULT Contract :: Registry :: XYK = {vault_registry}")
 
-        # vault_registry = self.query_vault_query_registery(VAULT_ADDR,  POOL_TYPES["Stable2Pool"]  )
+        # vault_registry = self.query_vault_query_registery(self.VAULT_ADDR,  self.POOL_TYPES["Stable2Pool"]  )
         # print(f"\nVAULT Contract :: Registry :: Stable-2-Pool = {vault_registry}")
 
-        # vault_registry = self.query_vault_query_registery(VAULT_ADDR,  POOL_TYPES["Stable5Pool"]  )
+        # vault_registry = self.query_vault_query_registery(self.VAULT_ADDR,  self.POOL_TYPES["Stable5Pool"]  )
         # print(f"\nVAULT Contract :: Registry :: Stable-5-Pool = {vault_registry}")
 
-        # vault_registry = self.query_vault_query_registery(VAULT_ADDR, POOL_TYPES["Weighted"]  )
+        # vault_registry = self.query_vault_query_registery(self.VAULT_ADDR, self.POOL_TYPES["Weighted"]  )
         # print(f"\nVAULT Contract :: Registry :: Weighted = {vault_registry}")
 
-        # IsGeneratorDisabled = self.query_vault_IsGeneratorDisabled(VAULT_ADDR, "persistence1w4sqzvve7jer3v8pqrwdge7nmwh5k6l6hsd4nzrmksg3ehzcqhjs7ja7zt")
+        # IsGeneratorDisabled = self.query_vault_IsGeneratorDisabled(self.VAULT_ADDR, "persistence1w4sqzvve7jer3v8pqrwdge7nmwh5k6l6hsd4nzrmksg3ehzcqhjs7ja7zt")
         # print(f"\nVAULT Contract - IsGeneratorDisabled = {IsGeneratorDisabled}")
 
-        # pool_info_by_id = self.query_vault_GetPoolById(VAULT_ADDR, '18')
+        # pool_info_by_id = self.query_vault_GetPoolById(self.VAULT_ADDR, '18')
         # print(f"\nVAULT Contract - Query Pool by ID = {pool_info_by_id}")
 
-        # pool_info_by_addr = self.query_vault_GetPoolByAddress(VAULT_ADDR, "persistence1w4sqzvve7jer3v8pqrwdge7nmwh5k6l6hsd4nzrmksg3ehzcqhjs7ja7zt")
+        # pool_info_by_addr = self.query_vault_GetPoolByAddress(self.VAULT_ADDR, "persistence1w4sqzvve7jer3v8pqrwdge7nmwh5k6l6hsd4nzrmksg3ehzcqhjs7ja7zt")
         # print(f"\nVAULT Contract - Query Pool by addr = {pool_info_by_addr}")
 
 
         #------------------------------------------------  TOKENS - Helper queries and functions  ------------------------------------------------
         #------------------------------------------------  xxxxxxxxxxxxxxxxxx  ------------------------------------------------
 
-        # token_addr = "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
-        # res = self.query_token_info(token_addr)
+        # self.TOKEN_ADDR = "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh"
+        # res = self.query_token_info(self.TOKEN_ADDR)
         # print(res)
 
-        # res = self.query_token_minter(token_addr)
+        # res = self.query_token_minter(self.TOKEN_ADDR)
         # print(res)
 
-        # tx = self.execute_mint_tokens(token_addr, self.wallet_addr,"100000000000000")
+        # tx = self.execute_mint_tokens(self.TOKEN_ADDR, self.wallet_addr,"100000000000000")
         # print(tx)
         # self.index_and_store_tx(tx)
 
-        # res = self.query_balance(token_addr, self.wallet_addr)
+        # res = self.query_balance(self.TOKEN_ADDR, self.wallet_addr)
         # print(res)
 
         # token_balance = self.query_balance("persistence1vguuxez2h5ekltfj9gjd62fs5k4rl2zy5hfrncasykzw08rezpfst7tmng", self.wallet_addr)
@@ -163,7 +163,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         lp_token_addr = "persistence1dy4gx3tpesmnp3kyrra5qukns48cgg9lc8zkzfn3z9aq6d9v0uaqpz4mu6"
 
         # ---xxxx---- Create XYK Pool ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["xyk"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=None  )
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( self.VAULT_ADDR, self.POOL_TYPES["xyk"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=None  )
         # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
 
 
@@ -175,7 +175,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # # print(provide_liquidity_to_pool_query)
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( self.VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
 
@@ -194,7 +194,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
-        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # swap_via_pool_tx = self.execute_vault_Swap( self.VAULT_ADDR, swap_request,  recipient=None, coins=None  )
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
         # ---xxxx---- Remove Liquidity :: XYK Pool ---xxxx---
@@ -205,7 +205,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
         # print(remove_liquidity_to_pool_query)
 
-        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( self.VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
         # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
         # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
@@ -233,7 +233,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(res)
 
         # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", self.VAULT_ADDR, '10000000000000')
         # self.index_and_store_tx(increase_allowance_tx)
 
      
@@ -256,7 +256,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # ---xxxx---- Create Stableswap Pool ---xxxx---- 
        
         # init_params = self.dict_to_b64({ "amp": 10 })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable2Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( self.VAULT_ADDR, self.POOL_TYPES["Stable2Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
         # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
 
 
@@ -270,7 +270,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # print(provide_liquidity_to_pool_query)
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( self.VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
 
@@ -288,7 +288,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
-        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # swap_via_pool_tx = self.execute_vault_Swap( self.VAULT_ADDR, swap_request,  recipient=None, coins=None  )
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
         # ---xxxx---- Remove Liquidity :: StableSwap Pool ---xxxx---
@@ -299,7 +299,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
         # print(remove_liquidity_to_pool_query)
 
-        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( self.VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
         # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
         # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
@@ -327,7 +327,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(res)
 
         # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", self.VAULT_ADDR, '10000000000000')
         # self.index_and_store_tx(increase_allowance_tx)
 
 
@@ -356,7 +356,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(res)
 
         init_params = self.dict_to_b64({ "amp": 10 })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Stable5Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( self.VAULT_ADDR, self.POOL_TYPES["Stable5Pool"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
         # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
 
 
@@ -390,7 +390,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
-        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # swap_via_pool_tx = self.execute_vault_Swap( self.VAULT_ADDR, swap_request,  recipient=None, coins=None  )
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
 
@@ -402,7 +402,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
         # print(remove_liquidity_to_pool_query)
 
-        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( self.VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
         # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
         # ---xxxx---- QUERY AND RELATED HELPERS ---xxxx--- ---xxxx--- ---xxxx--- ---xxxx---
@@ -430,7 +430,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(res)
 
         # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", self.VAULT_ADDR, '10000000000000')
         # self.index_and_store_tx(increase_allowance_tx)
 
 
@@ -459,7 +459,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
                    {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
                 ]
         init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
-        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( self.VAULT_ADDR, self.POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
         # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
 
 
@@ -476,7 +476,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # print(provide_liquidity_to_pool_query)
 
-        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( self.VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
         
 
@@ -494,7 +494,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
         # print(swap_via_pool_query)
 
-        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # swap_via_pool_tx = self.execute_vault_Swap( self.VAULT_ADDR, swap_request,  recipient=None, coins=None  )
         # self.index_and_store_tx(swap_via_pool_tx, "swap")
 
 
@@ -506,7 +506,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # remove_liquidity_to_pool_query = self.query_pool_on_exit_pool( pool_addr, assets_out, burn_amount )
         # print(remove_liquidity_to_pool_query)
 
-        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
+        # remove_liquidity_to_pool_tx = self.execute_vault_exit_pool( self.VAULT_ADDR, lp_token_addr, burn_amount, pool_id, recipient=None, assets=assets_out, burn_amount=burn_amount  )
         # print(remove_liquidity_to_pool_tx)
         # self.index_and_store_tx(remove_liquidity_to_pool_tx, "remove_liquidity")
 
@@ -535,7 +535,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # print(res)
 
         # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when providing liquidity
-        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", self.VAULT_ADDR, '10000000000000')
         # self.index_and_store_tx(increase_allowance_tx)
 
 

@@ -131,12 +131,12 @@ class dexter_helpers_mixin():
     def query_pool_on_swap(self,  contract_addr,swap_type,offer_asset,ask_asset,amount, max_spread=None, belief_price=None):
         try:
             sim_response = self.client.wasm.contract_query(contract_addr , {"on_swap":{ 
-            swap_type: swap_type,
-            offer_asset: offer_asset,
-            ask_asset: ask_asset,
-            amount: amount,
-            max_spread: max_spread,
-            belief_price: belief_price,
+            "swap_type": swap_type,
+            "offer_asset": offer_asset,
+            "ask_asset": ask_asset,
+            "amount": amount,
+            "max_spread": max_spread,
+            "belief_price": belief_price,
             }})
             return sim_response         
         except:
@@ -235,11 +235,11 @@ class dexter_helpers_mixin():
         res = self.client.tx.broadcast(tx)
         return res
 
-    def execute_vault_Swap(self,vault_addr, swap_request, recipient=None ):
+    def execute_vault_Swap(self,vault_addr, swap_request, recipient=None, coins=None ):
         msg = { "swap": {         
-            swap_request: swap_request,
-            recipient: recipient }}
-        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg)
+            "swap_request": swap_request,
+            "recipient": recipient }}
+        convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg, coins)
         tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
         res = self.client.tx.broadcast(tx)
         return res

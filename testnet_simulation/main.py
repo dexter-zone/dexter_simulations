@@ -45,6 +45,13 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         except:
             self.provide_liquidity_txs_DF = pd.DataFrame([], columns = ['block_time_last','pool_id', 'lp_tokens_minted', 'provided_assets', 'total_pool_liquidity'])
 
+        # Swap Txs List DF
+        try:
+            self.swap_txs_DF = pd.read_csv ("./data/swap_txs_DF.csv")
+        except:
+            self.swap_txs_DF = pd.DataFrame([], columns = ['block_time_last','txhash', 'pool_id', 'offer_asset', 'offer_amount', 'ask_asset', 'ask_amount', 'swap_type', 'total_fee', 'fee_asset', 'total_pool_liquidity' ])
+
+
         # 
         # return
 
@@ -98,7 +105,7 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         #------------------------------------------------  DEXTER POOLS -::- CREATION  ------------------------------------------------
 
         asset_infos = [
-            # { "native_token": { "denom": "uxprt" } },
+            { "native_token": { "denom": "uxprt" } },
              { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } },
              { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } },
              { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } },
@@ -134,15 +141,15 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # return
 
         # ---xxxx----  Create Weighted Pool ---xxxx---- 
-        weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
-                   {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
-                   {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
-                   {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
-                ]
-        init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
-        create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
-        self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
-        return
+        # weights = [{ "info": { "native_token": { "denom": "uxprt" } }, "amount": "10" },
+        #            {"info": { "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount": "20",},
+        #            {"info": { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount": "30",},
+        #            {"info": { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount": "40",},
+        #         ]
+        # init_params = self.dict_to_b64({ "weights": weights, "exit_fee": "0.005", })
+        # create_pool_tx = self.execute_vault_CreatePoolInstance( VAULT_ADDR, POOL_TYPES["Weighted"], asset_infos, lp_token_name=None, lp_token_symbol=None, init_params=init_params  )
+        # self.index_and_store_tx(create_pool_tx, "create_dexter_pool")
+        # return
 
 
 
@@ -202,15 +209,15 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
 
        # ---xxxx---- Provide Liquidity Stable-5-Swap Pool :: Needs to be fixed ---xxxx---
-        pool_id = '27'
-        pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
-        assets_in = [
-            { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-            { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
-            { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
-                    # {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
-                    ]
-        slippage_tolerance = None
+        # pool_id = '27'
+        # pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
+        # assets_in = [
+        #     { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+        #     { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
+        #     { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
+        #             # {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
+        #             ]
+        # slippage_tolerance = None
 
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # print(provide_liquidity_to_pool_query)
@@ -218,18 +225,20 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
         # print(provide_liquidity_to_pool_tx)
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+
+        # return
 
        # ---xxxx---- Provide Liquidity WEIGHTED Pool ---xxxx---
 
-        pool_id = '27'
-        pool_addr = "persistence1lqndudd7z6vafksxel5qkuyrzakm4l9mpnkn73579kyh46aelttsqtrugs"
-        assets_in = [
-            { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
-            { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
-            { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
-                    # {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
-                    ]
-        slippage_tolerance = None
+        # pool_id = '28'
+        # pool_addr = "persistence189y9w6tj56g72ud8vjce0vfnkse6v7rp3jjuqkavugnwgduqqj7qzjsh3g"
+        # assets_in = [
+        #     { "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+        #     { "info":{ "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }, "amount":'100' }, 
+        #     { "info":{ "token": { "contract_addr": "persistence1vqpc6fl6v6semp3yhml5mzw8pgcrafawjk5f6cq4723wc47y0l2qualxyh" } }, "amount":'100' }, 
+        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'1000' }
+        #             ]
+        # slippage_tolerance = None
 
         # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
         # print(provide_liquidity_to_pool_query)
@@ -237,14 +246,46 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
         # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
         # print(provide_liquidity_to_pool_tx)
         # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
-
-        offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
-        ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
-        res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
-        print(res)
         
-        res = self.query_cumulative_prices(pool_addr)
-        print(res)
+        # Query Cumulative Prices : Query 
+        # offer_asset = { "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }
+        # ask_asset = { "token": { "contract_addr": "persistence10kkn698hpzm07kj0klhj3hrkxjsmngj9598esypm5kh9hfpealpqpjvhel" } }
+        # res = self.query_cumulative_price(pool_addr, offer_asset, ask_asset)
+        # print(res)
+        
+        # res = self.query_cumulative_prices(pool_addr)
+        # print(res)
+
+        #------------------------------------------------  DEXTER POOLS -::- SWAPS  ------------------------------------------------
+
+        # INCREASE ALLOWANCE - VAULT CONTRACT needs to be able to transfer tokens from your account when swapping
+        # increase_allowance_tx = self.execute_increase_allowance("persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq", VAULT_ADDR, '10000000000000')
+        # self.index_and_store_tx(increase_allowance_tx)
+        # return
+
+        # res = self.query_pool_config("persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa")
+        # print(res)
+        # return
+
+        # ---xxxx---- SWAP Tokens :: XYK Pool ---xxxx---
+
+        pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
+        swap_request = {
+            "pool_id": '20',
+            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+            "asset_out":  { "native_token": {"denom": "uxprt"} },
+            "swap_type": { "give_in":{} },
+            "amount": '100',
+            "max_spread": '0.5',
+            "belief_price": None
+        }
+        swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        print(swap_via_pool_query)
+
+        swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        print(swap_via_pool_tx)
+        self.index_and_store_tx(swap_via_pool_tx, "swap")
+
 
         # self.get_block_timestamp()
         # return

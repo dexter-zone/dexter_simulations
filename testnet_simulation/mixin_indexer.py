@@ -244,7 +244,8 @@ class indexer_helpers_mixin():
                     if attr["key"] == "recipient_addr":
                         tx_info["recipient_addr"] = attr["value"]
         # store tx
-        self.remove_liquidity_txs_DF = self.remove_liquidity_txs_DF.append(tx_info, ignore_index= True)
+        # self.remove_liquidity_txs_DF = self.remove_liquidity_txs_DF.append(tx_info, ignore_index= True)
+        self.remove_liquidity_txs_DF = pandas.concat([self.remove_liquidity_txs_DF, pandas.DataFrame.from_records([tx_info])])
         self.remove_liquidity_txs_DF.to_csv("./data/remove_liquidity_txs_DF.csv", index=False)
 
 

@@ -269,22 +269,100 @@ class DexterModel(dexter_helpers_mixin, indexer_helpers_mixin):
 
         # ---xxxx---- SWAP Tokens :: XYK Pool ---xxxx---
 
-        pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
-        swap_request = {
-            "pool_id": '20',
-            "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
-            "asset_out":  { "native_token": {"denom": "uxprt"} },
-            "swap_type": { "give_in":{} },
-            "amount": '100',
-            "max_spread": '0.5',
-            "belief_price": None
-        }
-        swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
-        print(swap_via_pool_query)
+        # pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
+        # swap_request = {
+        #     "pool_id": '20',
+        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
+        #     "swap_type": { "give_in":{} },
+        #     "amount": '100',
+        #     "max_spread": '0.5',
+        #     "belief_price": None
+        # }
+        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        # print(swap_via_pool_query)
 
-        swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
-        print(swap_via_pool_tx)
-        self.index_and_store_tx(swap_via_pool_tx, "swap")
+        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # print(swap_via_pool_tx)
+        # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+        # ---xxxx---- SWAP Tokens :: StableSwap Pool ---xxxx---
+
+        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
+        # swap_request = {
+        #     "pool_id": '21',
+        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
+        #     "swap_type": { "give_in":{} },
+        #     "amount": '100',
+        #     "max_spread": '0.5',
+        #     "belief_price": None
+        # }
+        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        # print(swap_via_pool_query)
+
+        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # print(swap_via_pool_tx)
+        # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+
+        # ---xxxx---- SWAP Tokens :: Stable-5-Swap Pool ---xxxx---
+
+        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
+        # swap_request = {
+        #     "pool_id": '21',
+        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
+        #     "swap_type": { "give_in":{} },
+        #     "amount": '100',
+        #     "max_spread": '0.5',
+        #     "belief_price": None
+        # }
+        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        # print(swap_via_pool_query)
+
+        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # print(swap_via_pool_tx)
+        # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+
+        # ---xxxx---- SWAP Tokens :: Weighted Pool ---xxxx---
+
+        # pool_addr = "persistence17rkj7w3d3v0lgutanxcmczah3ls7qwphp5y48574ae3882tgvmequmhu9r"
+        # swap_request = {
+        #     "pool_id": '21',
+        #     "asset_in": { "token": {"contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq"} },
+        #     "asset_out":  { "native_token": {"denom": "uxprt"} },
+        #     "swap_type": { "give_in":{} },
+        #     "amount": '100',
+        #     "max_spread": '0.5',
+        #     "belief_price": None
+        # }
+        # swap_via_pool_query = self.query_pool_on_swap( pool_addr, swap_request["swap_type"] ,swap_request["asset_in"],swap_request["asset_out"],swap_request["amount"], swap_request["max_spread"], swap_request["belief_price"] )
+        # print(swap_via_pool_query)
+
+        # swap_via_pool_tx = self.execute_vault_Swap( VAULT_ADDR, swap_request,  recipient=None, coins=None  )
+        # print(swap_via_pool_tx)
+        # self.index_and_store_tx(swap_via_pool_tx, "swap")
+
+        #------------------------------------------------  DEXTER POOLS -::- REMOVE Liquidity  ------------------------------------------------
+
+
+        # pool_id = '20'
+        # pool_addr = "persistence1skpqtmc6n8kg3ksu7734kxtzezhlckgcq30fs44qt40w9h8njqyq4f0fpa"
+        # assets_in = [{ "info":{ "token": { "contract_addr": "persistence1ekc95e6p7277t77ahxn2dhl5qz76r6egdlrdp2ehvewdraa97m7qfz2ydq" } }, "amount":'100' }, 
+        #             {"info":{ "native_token": {"denom":"uxprt"} }, "amount":'100' }]
+        # slippage_tolerance = None
+
+        # provide_liquidity_to_pool_query = self.query_pool_on_join_pool( pool_addr, assets_in, None ,slippage_tolerance )
+        # # print(provide_liquidity_to_pool_query)
+
+        # provide_liquidity_to_pool_tx = self.execute_vault_JoinPool( VAULT_ADDR, pool_id, recipient=None, assets=assets_in, lp_to_mint=None, slippage_tolerance=None, auto_stake=None, coins = Coins(uxprt=6250000)  )
+        # # print(provide_liquidity_to_pool_tx)
+        # self.index_and_store_tx(provide_liquidity_to_pool_tx, "provide_liquidity")
+
+
+
 
 
         # self.get_block_timestamp()

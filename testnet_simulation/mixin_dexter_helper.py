@@ -230,10 +230,16 @@ class dexter_helpers_mixin():
             "slippage_tolerance": slippage_tolerance,
             "auto_stake": auto_stake
              }}
+        # print(msg)
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, vault_addr, msg, coins )
-        tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
-        res = self.client.tx.broadcast(tx)
-        return res
+        try:
+            tx = self.wallet.create_and_sign_tx(CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=6250000)),) )
+            print(tx)
+            res = self.client.tx.broadcast(tx)
+            # print(res)
+            return res
+        except Exception as e:
+            print(e)
 
     def execute_vault_Swap(self,vault_addr, swap_request, recipient=None, coins=None ):
         msg = { "swap": {         
@@ -381,7 +387,10 @@ class dexter_helpers_mixin():
 
     # Failitates updating some of the configuration param of the Dexter Generator Contract
     def execute_generator_UpdateConfig(self,generator_addr,dex_token=None,vesting_contract=None,checkpoint_generator_limit=None, unbonding_period=None ):
-        msg = { "update_config": {'dex_token': dex_token,  "vesting_contract": vesting_contract, "checkpoint_generator_limit":checkpoint_generator_limit, "unbonding_period":unbonding_period  }}
+        msg = { "update_config": {'dex_token': dex_token,  
+                "vesting_contract": vesting_contract,  
+                "unbonding_period":unbonding_period  
+                }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
         tx = self.wallet.create_and_sign_tx( CreateTxOptions( msgs=[convertMsgPrep], fee=Fee(5000000, Coins(uxprt=626250000)),) ) 
         res = self.client.tx.broadcast(tx)
@@ -403,7 +412,7 @@ class dexter_helpers_mixin():
         res = self.client.tx.broadcast(tx)
         return res
 
-    # Failitates updating some of the configuration param of the Dexter Generator Contract
+    # Setup a proxy contract for a specific LP token pool
     def execute_generator_SetupProxyForPool(self,generator_addr,lp_token,proxy_addr):
         msg = { "setup_proxy_for_pool": {'lp_token': lp_token,  "proxy_addr": proxy_addr }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
@@ -461,7 +470,8 @@ class dexter_helpers_mixin():
         res = self.client.tx.broadcast(tx)
         return res
 
-    #    Unstake LP tokens from the Generator without withdrawing outstanding rewards.  LP tokens need to be unbonded for a period of time before they can be withdrawn.
+    #    Unstake LP tokens from the Generator without withdrawing outstanding rewards.  
+    # LP tokens need to be unbonded for a period of time before they can be withdrawn.
     def execute_generator_EmergencyUnstake(self,generator_addr,lp_token ):
         msg = { "emergency_unstake": { 'lp_token':lp_token }}
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, generator_addr, msg)
@@ -481,7 +491,7 @@ class dexter_helpers_mixin():
     def execute_generator_Deposit(self,generator_addr, lp_token_addr, amount ):
         cw20_send = { "send": {
             "contract": generator_addr,
-            "amount" : amount,
+            "amount" : str(amount),
             "msg": self.dict_to_b64({ "deposit": { }})
         } }
         convertMsgPrep = MsgExecuteContract(self.wallet.key.acc_address, lp_token_addr, cw20_send)

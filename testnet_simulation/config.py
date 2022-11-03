@@ -6,10 +6,21 @@ CHAIN_ID = "persistencecore"
 
 addresses = {
   "test_tokens_addresses": [
-    "persistence1u2zdjcczjrenwmf57fmrpensk4the84azdm05m3unm387rm8asdsh0yf27",
-    "persistence1rtdulljz3dntzpu085c7mzre9dg4trgdddu4tqk7uuuvu6xrfu8s8wcs45",
-    "persistence13hwj6afyxgue26f966hd5jkcvvjeruv7f9cdtd5d9mrtyrnn73ysyxvc8c",
-    "persistence1gd54cnu80s8qdqcyhyvn06m87vlmch2uf4wvz4z08svawvc2rhysgvav55"
+    "persistence14pca2wuhufwpe4hsuka6ue2fmg0ffl5uumaa4p45l009mjw7r0pqtnz2f5",
+    "persistence1da9krw7mn7cp2p74sus6x0ckfd5c9q5vhqe92yx8cf5dyqu8q8gq7mg5uk",
+    "persistence17ln6t80dtevdwxtat4g3d7gnvn7t6u6lwn9sfl95us4v2ze7uw5qd302s4",
+    "persistence1uakxncqvela43mtpck8azfupk7wzzau8jx785595fc73tqg803hq6mwqqp",
+    "persistence107sw07mqlgkpysv5mv7m4hgxqcj2elhdhnkrjk5kaeamcfa293tsh4wdl5",
+    "persistence1fkah0lxpjdm746afuw9qvtafvtpgfmvtydg2s5uytzr4fzldh8sq7zexpz",
+    "persistence1a544t99uyrc3ewzce0k8gpvlsksnkfn5mcwgq8tpnrwzc73erjgq5p5ak7",
+    "persistence109mcvjd52amnrljjqhhtfp3epza6tw5mmly3ts6jtmuwevvzhvyqz6e4ws",
+    "persistence14gflskh3weuqc9x3k466yrkdql77sxac757zzkund08cn3ypeewq2qpr9j",
+    "persistence1zahr4lhn87fwjsytkaykdl9ttdwxsw5we6vg9nav80zm5tyemgasqqu2wk",
+    "persistence1gyjur3zwa5kk9u4ggj8y65pk5rvxm2ry2vgsd8krkwu8ma6s6xzsa98aav",
+    "persistence15lee27ugt6cnsg65yem2wkrl7fms0g9m2vwudshvdaqyxd3vvlqqdlnfzk",
+    "persistence1rfqm664wlrsc9j5hafxa9hql3jtyyrjl4yqzprwkg59eets89zdsjd4whp",
+    "persistence1t50p0lg0xrz756tlfjveutc8ujdtc7998cndmpm8pcn4dv4wc39s5m9040",
+    "persistence1cnyksdahdpzkh2wmhpjjg5xwwf6jssgmmxeddwlghd86uu9y8qeqw9hqwg"
   ],
   "xyk_pool_addr": "persistence1ut5qjunqrj6pnmg9vjlm8eufulquzdgqfw4xtg02kez0fdmzn9sqv804rp",
   "xyk_lp_token_addr": "persistence1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvasejtgv7",

@@ -28,6 +28,7 @@ class indexer_helpers_mixin():
 
 
     def index_tx(self,  tx_response):    
+        # print(tx_response.raw_log)
         return {    
         "timestamp" : tx_response.timestamp,
         "height" : tx_response.height,
@@ -104,7 +105,7 @@ class indexer_helpers_mixin():
                     if attr["key"] == "pool_addr":
                         pool_info["pool_addr"] = attr["value"]
                    
-        print(pool_info)
+        # print(pool_info)
         # store tx
         self.dexter_pools_DF = self.dexter_pools_DF.append(pool_info, ignore_index= True)
         self.dexter_pools_DF.to_csv("./data/dexter_pools_DF.csv", index=False)
@@ -125,7 +126,7 @@ class indexer_helpers_mixin():
         events = rawlog[0]["events"]
         for event in events:
             # wasm-dexter-pool::update-liquidity
-            if event["type"] == "wasm-dexter-pool::update-liquidity":
+            if event["type"] == "wasm-dexter-pool::update_liquidity":
                 attributes = event["attributes"]
                 for attr in attributes:
                     if attr["key"] == "block_time_last":
@@ -145,6 +146,7 @@ class indexer_helpers_mixin():
                         pool_info["provided_assets"] = attr["value"]
                    
         # store tx
+        # print(pool_info)
         self.provide_liquidity_txs_DF = self.provide_liquidity_txs_DF.append(pool_info, ignore_index= True)
         self.provide_liquidity_txs_DF.to_csv("./data/provide_liquidity_txs_DF.csv", index=False)
 
@@ -169,7 +171,7 @@ class indexer_helpers_mixin():
         events = rawlog[0]["events"]
         for event in events:
             # wasm-dexter-pool::update-liquidity
-            if event["type"] == "wasm-dexter-pool::update-liquidity":
+            if event["type"] == "wasm-dexter-pool::update_liquidity":
                 attributes = event["attributes"]
                 for attr in attributes:
                     if attr["key"] == "block_time_last":
@@ -218,7 +220,7 @@ class indexer_helpers_mixin():
         events = rawlog[0]["events"]
         for event in events:
             # wasm-dexter-pool::update-liquidity
-            if event["type"] == "wasm-dexter-pool::update-liquidity":
+            if event["type"] == "wasm-dexter-pool::update_liquidity":
                 attributes = event["attributes"]
                 for attr in attributes:
                     if attr["key"] == "block_time_last":
